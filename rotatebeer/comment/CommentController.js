@@ -8,7 +8,7 @@ router.use(bodyParser.urlencoded({ extended: true }));
 var Comment = require('./Comment');
 
 // CREATES A NEW Comment
-router.post('/', function (req, res) {
+router.post('/', VerifyToken, function (req, res) {
     Comment.create({
             checkinid : req.body.checkinid,
             userid : req.body.userid,
@@ -40,7 +40,7 @@ router.get('/:id', function (req, res) {
 });
 
 // DELETES A CommentS FROM THE DATABASE
-router.delete('/:id', function (req, res) {
+router.delete('/:id', VerifyToken, function (req, res) {
     Comment.findByIdAndRemove(req.params.id, function (err, comment) {
         if (err) return res.status(500).send("There was a problem deleting the Comment.");
         res.status(200).send("Comment was deleted.");
@@ -49,7 +49,7 @@ router.delete('/:id', function (req, res) {
 
 // UPDATES A SINGLE CommentS IN THE DATABASE
 // Added VerifyToken middleware to make sure only an authenticated user can put to this route
-router.put('/:id', /* VerifyToken, */ function (req, res) {
+router.put('/:id', VerifyToken, function (req, res) {
     Comment.findByIdAndUpdate(req.params.id, req.body, {new: true}, function (err, comment) {
         if (err) return res.status(500).send("There was a problem updating the Comment.");
         res.status(200).send(comment);

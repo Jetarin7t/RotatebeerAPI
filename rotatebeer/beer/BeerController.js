@@ -8,7 +8,7 @@ router.use(bodyParser.urlencoded({ extended: true }));
 var Beer = require('./Beer');
 
 // CREATES A NEW BEER
-router.post('/', function (req, res) {
+router.post('/', VerifyToken, function (req, res) {
     Beer.create({
             name : req.body.name,
             style : req.body.style,
@@ -44,7 +44,7 @@ router.get('/:id', function (req, res) {
 });
 
 // DELETES A BEERS FROM THE DATABASE
-router.delete('/:id', function (req, res) {
+router.delete('/:id', VerifyToken, function (req, res) {
     Beer.findByIdAndRemove(req.params.id, function (err, beer) {
         if (err) return res.status(500).send("There was a problem deleting the beer.");
         res.status(200).send("Beer: "+ beer.name +" was deleted.");
@@ -53,7 +53,7 @@ router.delete('/:id', function (req, res) {
 
 // UPDATES A SINGLE BEERS IN THE DATABASE
 // Added VerifyToken middleware to make sure only an authenticated user can put to this route
-router.put('/:id', /* VerifyToken, */ function (req, res) {
+router.put('/:id', VerifyToken, function (req, res) {
     Beer.findByIdAndUpdate(req.params.id, req.body, {new: true}, function (err, beer) {
         if (err) return res.status(500).send("There was a problem updating the beer.");
         res.status(200).send(beer);

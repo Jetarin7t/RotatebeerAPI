@@ -8,7 +8,7 @@ router.use(bodyParser.urlencoded({ extended: true }));
 var Event = require('./Event');
 
 // CREATES A NEW Event
-router.post('/', function (req, res) {
+router.post('/', VerifyToken, function (req, res) {
     Event.create({
             userid : req.body.userid,
             username : req.body.username,
@@ -42,7 +42,7 @@ router.get('/:id', function (req, res) {
 });
 
 // DELETES A EventS FROM THE DATABASE
-router.delete('/:id', function (req, res) {
+router.delete('/:id', VerifyToken, function (req, res) {
     Event.findByIdAndRemove(req.params.id, function (err, event) {
         if (err) return res.status(500).send("There was a problem deleting the Event.");
         res.status(200).send("Event: "+ event.eventname +" was deleted.");
@@ -51,7 +51,7 @@ router.delete('/:id', function (req, res) {
 
 // UPDATES A SINGLE EventS IN THE DATABASE
 // Added VerifyToken middleware to make sure only an authenticated user can put to this route
-router.put('/:id', /* VerifyToken, */ function (req, res) {
+router.put('/:id', VerifyToken, function (req, res) {
     Event.findByIdAndUpdate(req.params.id, req.body, {new: true}, function (err, event) {
         if (err) return res.status(500).send("There was a problem updating the Event.");
         res.status(200).send(event);

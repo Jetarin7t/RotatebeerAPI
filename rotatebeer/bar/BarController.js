@@ -8,7 +8,7 @@ router.use(bodyParser.urlencoded({ extended: true }));
 var Bar = require('./Bar');
 
 // CREATES A NEW BAR
-router.post('/', function (req, res) {
+router.post('/', VerifyToken, function (req, res) {
     Bar.create({
             name : req.body.name,
             imageURL : req.body.imageURL,
@@ -42,7 +42,7 @@ router.get('/:id', function (req, res) {
 });
 
 // DELETES A BARS FROM THE DATABASE
-router.delete('/:id', function (req, res) {
+router.delete('/:id', VerifyToken, function (req, res) {
     Bar.findByIdAndRemove(req.params.id, function (err, bar) {
         if (err) return res.status(500).send("There was a problem deleting the bar.");
         res.status(200).send("Bar: "+ bar.name +" was deleted.");
@@ -51,7 +51,7 @@ router.delete('/:id', function (req, res) {
 
 // UPDATES A SINGLE BARS IN THE DATABASE
 // Added VerifyToken middleware to make sure only an authenticated user can put to this route
-router.put('/:id', /* VerifyToken, */ function (req, res) {
+router.put('/:id', VerifyToken, function (req, res) {
     Bar.findByIdAndUpdate(req.params.id, req.body, {new: true}, function (err, bar) {
         if (err) return res.status(500).send("There was a problem updating the bar.");
         res.status(200).send(bar);
